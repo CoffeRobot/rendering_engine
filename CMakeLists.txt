@@ -4,7 +4,7 @@ project(fato_rendering)
 
 find_package(OpenCV REQUIRED)
 find_package(OpenGL REQUIRED)
-find_package(CUDA 6.5 REQUIRED)
+#find_package(CUDA 6.5 REQUIRED)
 #find_package(Eigen REQUIRED)
 #add_definitions(${EIGEN_DEFINITIONS})
 #find_package(urdfdom REQUIRED)

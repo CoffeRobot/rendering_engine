@@ -18,8 +18,8 @@ set(CMAKE_MODULE_PATH "/home/alessandro/ogre/lib/OGRE/cmake/;${CMAKE_MODULE_PATH
 set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules/;${CMAKE_MODULE_PATH} ")
 
 find_package(GLFW REQUIRED)
-find_package(SOIL REQUIRED)
-find_package(OGRE REQUIRED)
+#find_package(SOIL REQUIRED)
+#find_package(OGRE REQUIRED)
 find_package(ASSIMP REQUIRED)
 # definition required by ROS, why the hell?
 
@@ -39,17 +39,18 @@ include_directories(include
   ${OpenCV_INCLUDE_DIRS}
 #  ${EIGEN_INCLUDE_DIR}
   ${OIS_INCLUDE_DIRS}
-  ${OGRE_INCLUDE_DIRS}
-  ${OGRE_RenderSystem_GL_INCLUDE_DIRS}
-  ${OGRE_Overlay_INCLUDE_DIRS}
+  #${OGRE_INCLUDE_DIRS}
+  #${OGRE_RenderSystem_GL_INCLUDE_DIRS}
+  #${OGRE_Overlay_INCLUDE_DIRS}
   ${urdfdom_INCLUDE_DIRS}
   ${CUDA_INCLUDE_DIRS}
   ${GLFW_INCLUDE_DIR}
-  ${SOIL_INCLUDE_DIR}
+ # ${SOIL_INCLUDE_DIR}
 )
 
 add_executable(${PROJECT_NAME}
   src/opengl_integration.cpp
+  src/shader.cpp
  )
 
 target_link_libraries(${PROJECT_NAME}
@@ -60,7 +61,7 @@ target_link_libraries(${PROJECT_NAME}
  ${GLEW_LIBRARIES}
  ${OPENGL_LIBRARIES}
  ${GLFW_LIBRARIES}
- ${SOIL_LIBRARIES}
+ #${SOIL_LIBRARIES}
  ${assimp_LIBRARIES}
  )
 

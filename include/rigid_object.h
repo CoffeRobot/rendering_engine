@@ -29,65 +29,40 @@
 /*  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE    */
 /*  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.     */
 /*****************************************************************************/
-#ifndef MESH_H
-#define MESH_H
+#ifndef RIGID_OBJECT_H
+#define RIGID_OBJECT_H
 
-// Std. Includes
-#include <string>
-#include <fstream>
-#include <sstream>
-#include <iostream>
-#include <vector>
-// GL Includes
-#include <GL/glew.h>  // Contains all the necessery OpenGL includes
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-
-#include <assimp/types.h>
-
+#include "model.h"
 #include "shader.h"
+#include <eigen3/Eigen/Dense>
 
-namespace rendering {
+namespace rendering{
 
-struct Vertex {
-  // Position
-  glm::vec3 Position;
-  // Normal
-  glm::vec3 Normal;
-  // TexCoords
-  glm::vec2 TexCoords;
+class RigidObject{
+
+public:
+
+    RigidObject(std::string model, std::string ver_shader, std::string frag_shader);
+
+    ~RigidObject();
+
+    void setVisible(bool is_visible);
+
+    bool isVisible();
+
+    void updatePose(Eigen::Transform<double, 3, Eigen::Affine> &pose);
+
+    Shader shader;
+    Model model;
+    glm::mat4 model_matrix_;
+
+private:
+
+    int object_id_;
+    bool is_visible_;
+
 };
 
-struct Texture {
-  GLuint id;
-  std::string type;
-  aiString path;
-};
+} // end namespace
 
-class Mesh {
- public:
-  /*  Mesh Data  */
-  std::vector<Vertex> vertices;
-  std::vector<GLuint> indices;
-  std::vector<Texture> textures;
-
-  /*  Functions  */
-  // Constructor
-  Mesh(std::vector<Vertex> vertices, std::vector<GLuint> indices,
-       std::vector<Texture> textures);
-
-  // Render the mesh
-  void draw(Shader shader);
-
- private:
-  /*  Render data  */
-  GLuint VAO, VBO, EBO;
-
-  /*  Functions    */
-  // Initializes all the buffer objects/arrays
-  void setupMesh();
-};
-
-}  // end namespace
-
-#endif  // MESH_H
+#endif // RIGID_OBJECT_H

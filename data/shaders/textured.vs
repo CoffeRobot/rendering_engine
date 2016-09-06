@@ -1,5 +1,5 @@
 /*****************************************************************************/
-/*  Copyright (c) 2016, Alessandro Pieropan                                  */
+/*  Copyright (c) 2015, Karl Pauwels                                         */
 /*  All rights reserved.                                                     */
 /*                                                                           */
 /*  Redistribution and use in source and binary forms, with or without       */
@@ -29,65 +29,25 @@
 /*  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE    */
 /*  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.     */
 /*****************************************************************************/
-#ifndef MESH_H
-#define MESH_H
 
-// Std. Includes
-#include <string>
-#include <fstream>
-#include <sstream>
-#include <iostream>
-#include <vector>
-// GL Includes
-#include <GL/glew.h>  // Contains all the necessery OpenGL includes
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
+#version 400
+in vec4 position;
+in vec3 normal;
+in vec2 uv0;
 
-#include <assimp/types.h>
+uniform mat4 worldViewProj;
+uniform mat4 invTraWorldView;
+uniform vec4 segmentIndex;
 
-#include "shader.h"
+out float vertexSegmentIndex;
+out vec3 vertexNormal;
+out vec2 vertexTexCoord;
 
-namespace rendering {
+void main()
+{
 
-struct Vertex {
-  // Position
-  glm::vec3 Position;
-  // Normal
-  glm::vec3 Normal;
-  // TexCoords
-  glm::vec2 TexCoords;
-};
+  gl_Position = projection * view * model * vec4(position, 1.0f);
 
-struct Texture {
-  GLuint id;
-  std::string type;
-  aiString path;
-};
-
-class Mesh {
- public:
-  /*  Mesh Data  */
-  std::vector<Vertex> vertices;
-  std::vector<GLuint> indices;
-  std::vector<Texture> textures;
-
-  /*  Functions  */
-  // Constructor
-  Mesh(std::vector<Vertex> vertices, std::vector<GLuint> indices,
-       std::vector<Texture> textures);
-
-  // Render the mesh
-  void draw(Shader shader);
-
- private:
-  /*  Render data  */
-  GLuint VAO, VBO, EBO;
-
-  /*  Functions    */
-  // Initializes all the buffer objects/arrays
-  void setupMesh();
-};
-
-}  // end namespace
-
-#endif  // MESH_H
+  vertexSegmentIndex = segmentIndex.x;
+  vertexTexCoord = uv0;
+}

@@ -1,5 +1,5 @@
 /*****************************************************************************/
-/*  Copyright (c) 2016, Alessandro Pieropan                                  */
+/*  Copyright (c) 2015, Karl Pauwels                                         */
 /*  All rights reserved.                                                     */
 /*                                                                           */
 /*  Redistribution and use in source and binary forms, with or without       */
@@ -29,65 +29,34 @@
 /*  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE    */
 /*  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.     */
 /*****************************************************************************/
-#ifndef MESH_H
-#define MESH_H
 
-// Std. Includes
-#include <string>
-#include <fstream>
-#include <sstream>
-#include <iostream>
-#include <vector>
-// GL Includes
-#include <GL/glew.h>  // Contains all the necessery OpenGL includes
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
+#version 400
+in float vertexSegmentIndex;
+in vec3 vertexNormal;
+in vec2 vertexTexCoord;
 
-#include <assimp/types.h>
+uniform sampler2D tex0;
 
-#include "shader.h"
+layout(location=0) out float out_normal_x;
+layout(location=1) out float out_normal_y;
+layout(location=2) out float out_normal_z;
+layout(location=3) out float out_z_buffer;
+layout(location=4) out float out_segment_ind;
+layout(location=5) out float out_grayscale;
 
-namespace rendering {
+void main()
+{
+    // no longer guaranteed unit length due to interpolation
+    vec3 normal = normalize(vertexNormal);
+    out_normal_x = normal.x;
+    out_normal_y = normal.y;
+    out_normal_z = normal.z;
+    out_z_buffer = gl_FragCoord.z;
+    out_segment_ind = vertexSegmentIndex;
 
-struct Vertex {
-  // Position
-  glm::vec3 Position;
-  // Normal
-  glm::vec3 Normal;
-  // TexCoords
-  glm::vec2 TexCoords;
-};
+    vec4 color = texture2D(tex0,vertexTexCoord);
+    out_grayscale = 0.299f*color.x + 0.587f*color.y + 0.114f*color.z;
 
-struct Texture {
-  GLuint id;
-  std::string type;
-  aiString path;
-};
-
-class Mesh {
- public:
-  /*  Mesh Data  */
-  std::vector<Vertex> vertices;
-  std::vector<GLuint> indices;
-  std::vector<Texture> textures;
-
-  /*  Functions  */
-  // Constructor
-  Mesh(std::vector<Vertex> vertices, std::vector<GLuint> indices,
-       std::vector<Texture> textures);
-
-  // Render the mesh
-  void draw(Shader shader);
-
- private:
-  /*  Render data  */
-  GLuint VAO, VBO, EBO;
-
-  /*  Functions    */
-  // Initializes all the buffer objects/arrays
-  void setupMesh();
-};
-
-}  // end namespace
-
-#endif  // MESH_H
+    // add 1 to more easily identify rendering mask (will be equal to zero)
+    out_grayscale += 1.0f;
+}

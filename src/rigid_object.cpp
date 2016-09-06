@@ -29,65 +29,43 @@
 /*  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE    */
 /*  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.     */
 /*****************************************************************************/
-#ifndef MESH_H
-#define MESH_H
 
-// Std. Includes
-#include <string>
-#include <fstream>
-#include <sstream>
-#include <iostream>
-#include <vector>
-// GL Includes
-#include <GL/glew.h>  // Contains all the necessery OpenGL includes
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-
-#include <assimp/types.h>
-
-#include "shader.h"
+#include "rigid_object.h"
 
 namespace rendering {
 
-struct Vertex {
-  // Position
-  glm::vec3 Position;
-  // Normal
-  glm::vec3 Normal;
-  // TexCoords
-  glm::vec2 TexCoords;
-};
+RigidObject::RigidObject(std::string model, std::string ver_shader,
+                         std::string frag_shader)
+    : model((GLchar*)model.c_str()),
+      shader((GLchar*)ver_shader.c_str(), (GLchar*)frag_shader.c_str()),
+model_matrix_(),
+is_visible_(true)
+{
 
-struct Texture {
-  GLuint id;
-  std::string type;
-  aiString path;
-};
+}
 
-class Mesh {
- public:
-  /*  Mesh Data  */
-  std::vector<Vertex> vertices;
-  std::vector<GLuint> indices;
-  std::vector<Texture> textures;
+RigidObject::~RigidObject() {}
 
-  /*  Functions  */
-  // Constructor
-  Mesh(std::vector<Vertex> vertices, std::vector<GLuint> indices,
-       std::vector<Texture> textures);
+void RigidObject::setVisible(bool is_visible) { is_visible_ = is_visible; }
 
-  // Render the mesh
-  void draw(Shader shader);
+bool RigidObject::isVisible() { return is_visible_; }
 
- private:
-  /*  Render data  */
-  GLuint VAO, VBO, EBO;
+void RigidObject::updatePose(Eigen::Transform<double, 3, Eigen::Affine>& pose) {
+//  for(int i = 0; i < 3; ++i)
+//  {
+//      for(int j = 0; j < 3; ++j)
+//      {
+//          model_matrix_[i][j] = pose(i,j);
+//      }
+//      model_matrix_[i][3] = pose(i,3);
+//  }
+//  model_matrix_[3][3] = 1;
 
-  /*  Functions    */
-  // Initializes all the buffer objects/arrays
-  void setupMesh();
-};
+
+
+    model_matrix_ = glm::translate(
+        model_matrix_,
+        glm::vec3(0.0f, 0.0f, -1.0f));
+}
 
 }  // end namespace
-
-#endif  // MESH_H

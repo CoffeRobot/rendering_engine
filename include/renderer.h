@@ -29,65 +29,74 @@
 /*  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE    */
 /*  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.     */
 /*****************************************************************************/
-#ifndef MESH_H
-#define MESH_H
+#ifndef RENDERER_H
+#define RENDERER_H
 
-// Std. Includes
-#include <string>
-#include <fstream>
-#include <sstream>
-#include <iostream>
-#include <vector>
-// GL Includes
-#include <GL/glew.h>  // Contains all the necessery OpenGL includes
-#include <glm/glm.hpp>
+
+#include "glm/glm.hpp"
 #include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
-#include <assimp/types.h>
+#define GLEW_STATIC
+#include <GL/glew.h>
 
+#include <GLFW/glfw3.h>
+
+#include <vector>
+#include <string>
+#include <memory>
+
+#include "camera.h"
+#include "model.h"
 #include "shader.h"
+#include "rigid_object.h"
 
-namespace rendering {
 
-struct Vertex {
-  // Position
-  glm::vec3 Position;
-  // Normal
-  glm::vec3 Normal;
-  // TexCoords
-  glm::vec2 TexCoords;
-};
 
-struct Texture {
-  GLuint id;
-  std::string type;
-  aiString path;
-};
+namespace rendering{
 
-class Mesh {
+
+
+
+class Renderer {
  public:
-  /*  Mesh Data  */
-  std::vector<Vertex> vertices;
-  std::vector<GLuint> indices;
-  std::vector<Texture> textures;
+  Renderer(int image_width, int image_height, float fx, float fy, float cx,
+           float cy, float near_plane, float far_plane);
 
-  /*  Functions  */
-  // Constructor
-  Mesh(std::vector<Vertex> vertices, std::vector<GLuint> indices,
-       std::vector<Texture> textures);
+  ~Renderer();
 
-  // Render the mesh
-  void draw(Shader shader);
+  void initRenderContext(int width = 640, int height = 480);
 
- private:
-  /*  Render data  */
-  GLuint VAO, VBO, EBO;
+  void updateProjectionMatrix(float fx, float fy, float cx, float cy,
+                              float near_plane, float far_plane);
 
-  /*  Functions    */
-  // Initializes all the buffer objects/arrays
-  void setupMesh();
+  void updateCamera(glm::vec3 position ,glm::vec3 orientation,
+                    glm::mat4 projection_matrix);
+  void render();
+
+  void addModel(std::string model_name, std::string ver_shader, std::string frag_shader);
+
+  RigidObject& getObject(int id);
+
+  std::vector<RigidObject> objects_;
+  glm::mat4 projection_matrix_;
+  Camera camera_;
+
+  GLFWwindow* window_;
+
+private:
+
+  int width_, height_;
+  float fx_, fy_, cx_, cy_;
+  float near_plane_, far_plane_;
+
+
+
+
+
 };
 
-}  // end namespace
 
-#endif  // MESH_H
+}
+
+#endif // RENDERER_H

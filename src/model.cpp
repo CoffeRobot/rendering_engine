@@ -36,7 +36,7 @@ namespace rendering {
 Model::Model(GLchar* path) { loadModel(path); }
 
 void Model::draw(Shader shader) {
-  for (GLuint i = 0; i < meshes.size(); i++) meshes[i].Draw(shader);
+  for (GLuint i = 0; i < meshes.size(); i++) meshes[i].draw(shader);
 }
 
 void Model::loadModel(string path) {
@@ -75,7 +75,7 @@ void Model::processNode(aiNode* node, const aiScene* scene) {
   }
 }
 
-void Model::processMesh(aiMesh* mesh, const aiScene* scene) {
+Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene) {
   // Data to fill
   vector<Vertex> vertices;
   vector<GLuint> indices;
@@ -179,7 +179,6 @@ vector<Texture> Model::loadMaterialTextures(aiMaterial* mat, aiTextureType type,
   }
   return textures;
 }
-};
 
 GLint TextureFromFile(const char* path, string directory) {
   // Generate texture ID and load texture data
@@ -189,14 +188,17 @@ GLint TextureFromFile(const char* path, string directory) {
   glGenTextures(1, &textureID);
 
   cv::Mat img = cv::imread(filename.c_str());
-  cv::cvtColor(img, img, CV_BGR2RGB);
   unsigned char* img_data = img.data;
 
   // unsigned char* image = SOIL_load_image(filename.c_str(), &width, &height,
   // 0, SOIL_LOAD_RGB);
   // Assign texture to ID
+  //TODO: quick hack to fix the odd texture size bug, check for a nicer solution
   glBindTexture(GL_TEXTURE_2D, textureID);
-  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, img.cols, img.rows, 0, GL_RGB,
+  glPixelStorei(GL_UNPACK_ROW_LENGTH, img.cols);
+  glPixelStorei(GL_PACK_ALIGNMENT, 1);
+  glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, img.cols, img.rows, 0, GL_BGR,
                GL_UNSIGNED_BYTE, img_data);
   glGenerateMipmap(GL_TEXTURE_2D);
 

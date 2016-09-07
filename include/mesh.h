@@ -67,14 +67,14 @@ struct Texture {
 class Mesh {
  public:
   /*  Mesh Data  */
-  std::vector<Vertex> vertices;
-  std::vector<GLuint> indices;
-  std::vector<Texture> textures;
+  std::vector<Vertex> vertices_;
+  std::vector<GLuint> indices_;
+  std::vector<Texture> textures_;
 
   /*  Functions  */
   // Constructor
-  Mesh(std::vector<Vertex> vertices, std::vector<GLuint> indices,
-       std::vector<Texture> textures);
+  Mesh(std::vector<Vertex> vertices_, std::vector<GLuint> indices_,
+       std::vector<Texture> textures_);
 
   // Render the mesh
   void draw(Shader shader);

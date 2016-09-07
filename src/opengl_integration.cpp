@@ -103,44 +103,58 @@ int main() {
       "/home/alessandro/projects/rendering_engine/data/shaders/model.frag");
 
   glm::mat4 projection = glm::perspective(
-      camera.Zoom, (float)screenWidth / (float)screenHeight, 0.1f, 100.0f);
+      45.0f, (float)screenWidth / (float)screenHeight, 0.1f, 1000.0f);
 
+//  cout << "glm projection " << endl;
+//  for (int i = 0; i < 4; ++i) {
+//    for (int j = 0; j < 4; ++j) {
+//      cout << projection[i][j] << " ";
+//    }
+//    cout << "\n";
+//  }
+//  cout << "\n";
+
+//  cout << "custom projection:" << endl;
+//  for (int i = 0; i < 4; ++i) {
+//    for (int j = 0; j < 4; ++j) {
+//      cout << renderer.projection_matrix_[i][j] << " ";
+//    }
+//    cout << "\n";
+//  }
+  //renderer.updateProjectionMatrix(projection);
+
+  glm::mat4 view;
+  view = glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f),
+             glm::vec3(0.0f, 0.0f, -1.0f),
+             glm::vec3(0.0f, 1.0f, 0.0f));
+  cout << "glm view matrix:" << endl;
   for (int i = 0; i < 4; ++i) {
     for (int j = 0; j < 4; ++j) {
-      cout << projection[i][j] << " ";
+      cout << view[i][j] << " ";
     }
     cout << "\n";
   }
+
+//  view = glm::lookAt(glm::vec3(0.0f, 0.0f, -3.0f),
+//             glm::vec3(0.0f, 0.0f, 0.0f),
+//             glm::vec3(0.0f, 1.0f, 0.0f));
+
+//  cout << "glm view matrix:" << endl;
+//  for (int i = 0; i < 4; ++i) {
+//    for (int j = 0; j < 4; ++j) {
+//      cout << view[i][j] << " ";
+//    }
+//    cout << "\n";
+//  }
+
+
 
   Eigen::Transform<double, 3, Eigen::Affine> pose;
   pose(2, 3) = -1.0f;
 
   rendering::RigidObject& obj = renderer.getObject(0);
   obj.setVisible(true);
-  obj.updatePose(pose);
-
-  // Draw in wireframe
-  // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-
-  //  glm::mat4 model;
-  //  model = glm::translate(
-  //      model,
-  //      glm::vec3(0.0f, 0.0f, -1.0f));
-
-  //  cout << "model matrix " << endl;
-  //  for (int i = 0; i < 4; ++i) {
-  //    for (int j = 0; j < 4; ++j) {
-  //      cout << model[i][j] << " ";
-  //    }
-  //    cout << "\n";
-  //  }
-  //  cout << "object matrix" << endl;
-  //  for (int i = 0; i < 4; ++i) {
-  //    for (int j = 0; j < 4; ++j) {
-  //      cout << obj.model_matrix_[i][j] << " ";
-  //    }
-  //    cout << "\n";
-  //  }
+  obj.translate(0.0,0.0,-1.0);
 
   // Game loop
   while (!glfwWindowShouldClose(renderer.window_)) {
@@ -148,8 +162,6 @@ int main() {
     GLfloat currentFrame = glfwGetTime();
     deltaTime = currentFrame - lastFrame;
     lastFrame = currentFrame;
-
-
 
     renderer.render();
 

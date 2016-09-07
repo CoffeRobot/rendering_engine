@@ -180,6 +180,16 @@ vector<Texture> Model::loadMaterialTextures(aiMaterial* mat, aiTextureType type,
   return textures;
 }
 
+int Model::getMeshCount()
+{
+    return meshes.size();
+}
+
+Mesh& Model::getMesh(int index)
+{
+    return meshes.at(index);
+}
+
 GLint TextureFromFile(const char* path, string directory) {
   // Generate texture ID and load texture data
   string filename = string(path);

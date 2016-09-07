@@ -80,6 +80,8 @@ class Camera {
   Camera(GLfloat posX, GLfloat posY, GLfloat posZ, GLfloat upX, GLfloat upY,
          GLfloat upZ, GLfloat yaw, GLfloat pitch);
 
+  Camera(glm::vec3 position, glm::vec3 up, glm::vec3 front);
+
   // Returns the view matrix calculated using Eular Angles and the LookAt Matrix
   glm::mat4 GetViewMatrix();
 
@@ -99,6 +101,8 @@ class Camera {
  private:
   // Calculates the front vector from the Camera's (updated) Eular Angles
   void updateCameraVectors();
+
+  glm::mat4 camera_matrix_;
 };
 
 }  // end namespace

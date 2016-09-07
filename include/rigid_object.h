@@ -52,14 +52,27 @@ public:
 
     void updatePose(Eigen::Transform<double, 3, Eigen::Affine> &pose);
 
+    void translate(float x, float y, float z);
+
+    void rotate(float rx, float ry, float rz);
+
+    std::vector<float> getBoundingBox();
+
     Shader shader;
     Model model;
     glm::mat4 model_matrix_;
+    glm::vec3 mins_, maxs_;
 
 private:
 
+    void computeBoundingBox();
+
     int object_id_;
     bool is_visible_;
+
+    std::vector<float> bounding_box_;
+
+
 
 };
 

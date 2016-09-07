@@ -30,6 +30,7 @@
 /*  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.     */
 /*****************************************************************************/
 #include "camera.h"
+#include <iostream>
 
 namespace rendering {
 
@@ -39,11 +40,18 @@ Camera::Camera(glm::vec3 position, glm::vec3 up, GLfloat yaw, GLfloat pitch)
       MovementSpeed(SPEED),
       MouseSensitivity(SENSITIVTY),
       Zoom(ZOOM) {
-  this->position_ = position;
-  this->world_up_ = up;
-  this->yaw_ = yaw;
-  this->pitch_ = pitch;
-  this->updateCameraVectors();
+  position_ = position;
+  world_up_ = up;
+  yaw_ = yaw;
+  pitch_ = pitch;
+  updateCameraVectors();
+  camera_matrix_ = glm::lookAt(position_, position_ + front_, up_);
+
+  glm::vec3 f = position_ + front_;
+  std::cout << "camera frame" << std::endl;
+  std::cout << position_.x << " " << position_.y << " " << position_.z << std::endl;
+  std::cout << f.x << " " << f.y << " " << f.z << std::endl;
+  std::cout << up_.x << " " << up_.y << " " << up_.z << std::endl;
 }
 // Constructor with scalar values
 Camera::Camera(GLfloat posX, GLfloat posY, GLfloat posZ, GLfloat upX,
@@ -52,15 +60,27 @@ Camera::Camera(GLfloat posX, GLfloat posY, GLfloat posZ, GLfloat upX,
       MovementSpeed(SPEED),
       MouseSensitivity(SENSITIVTY),
       Zoom(ZOOM) {
-  this->position_ = glm::vec3(posX, posY, posZ);
-  this->world_up_ = glm::vec3(upX, upY, upZ);
-  this->yaw_ = yaw;
-  this->pitch_ = pitch;
-  this->updateCameraVectors();
+  position_ = glm::vec3(posX, posY, posZ);
+  world_up_ = glm::vec3(upX, upY, upZ);
+  yaw_ = yaw;
+  pitch_ = pitch;
+  updateCameraVectors();
+  camera_matrix_ = glm::lookAt(position_, position_ + front_, up_);
+
+  glm::vec3 f = position_ + front_;
+  std::cout << "camera frame" << std::endl;
+  std::cout << position_.x << " " << position_.y << " " << position_.z << std::endl;
+  std::cout << f.x << " " << f.y << " " << f.z << std::endl;
+  std::cout << up_.x << " " << up_.y << " " << up_.z << std::endl;
+}
+
+Camera::Camera(glm::vec3 position, glm::vec3 up, glm::vec3 front)
+{
+    camera_matrix_ = glm::lookAt(position, front, up);
 }
 
 glm::mat4 Camera::GetViewMatrix() {
-  return glm::lookAt(position_, position_ + front_, up_);
+  return camera_matrix_;
 }
 
 void Camera::ProcessKeyboard(Camera_Movement direction, GLfloat deltaTime) {

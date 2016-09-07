@@ -68,6 +68,10 @@ class Model {
   // Draws the model, and thus all its meshes
   void draw(Shader shader);
 
+  int getMeshCount();
+
+  Mesh& getMesh(int idex);
+
  private:
   /*  Model Data  */
   vector<Mesh> meshes;

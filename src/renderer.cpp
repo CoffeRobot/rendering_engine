@@ -47,12 +47,24 @@ Renderer::Renderer(int image_width, int image_height, float fx, float fy,
       cy_(cy),
       near_plane_(near_plane),
       far_plane_(far_plane),
-      camera_(glm::vec3(0.0, 0.0, 0.0)) {}
+      camera_(glm::vec3(0.0, 0.0, 0.0),glm::vec3(0.0, 1.0, 0.0),glm::vec3(0.0, 0.0, -1.0))
+{
+    updateProjectionMatrix(fx,fy,cx,cy,near_plane,far_plane);
+
+//    glm::mat4 view = camera_.GetViewMatrix();
+//    cout << "renderer camera matrix " << endl;
+//    for (int i = 0; i < 4; ++i) {
+//      for (int j = 0; j < 4; ++j) {
+//        cout << view[i][j] << " ";
+//      }
+//      cout << "\n";
+//    }
+}
 
 Renderer::~Renderer() { glfwTerminate(); }
 
 void Renderer::initRenderContext(int width, int height) {
-  cout << "getting here" << endl;
+  //cout << "getting here" << endl;
 
   glfwInit();
   glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
@@ -72,7 +84,7 @@ void Renderer::initRenderContext(int width, int height) {
 
   glEnable(GL_DEPTH_TEST);
 
-  cout << "ending init" << endl;
+  //cout << "ending init" << endl;
 }
 
 void Renderer::updateProjectionMatrix(float fx, float fy, float cx, float cy,
@@ -88,15 +100,21 @@ void Renderer::updateProjectionMatrix(float fx, float fy, float cx, float cy,
   float zoom_x = 1;
   float zoom_y = 1;
 
+  // on the contrary of OGRE, projection matrix should be row major!
   projection_matrix_[0][0] = 2.0 * fx / (float)width_ * zoom_x;
   projection_matrix_[1][1] = 2.0 * fy / (float)height_ * zoom_y;
-  projection_matrix_[0][2] = 2.0 * (0.5 - cx / (float)width_) * zoom_x;
-  projection_matrix_[1][2] = 2.0 * (cy / (float)height_ - 0.5) * zoom_y;
+  projection_matrix_[2][0] = 2.0 * (0.5 - cx / (float)width_) * zoom_x;
+  projection_matrix_[2][1] = 2.0 * (cy / (float)height_ - 0.5) * zoom_y;
   projection_matrix_[2][2] =
       -(far_plane + near_plane) / (far_plane - near_plane);
-  projection_matrix_[2][3] =
+  projection_matrix_[3][2] =
       -2.0 * far_plane * near_plane / (far_plane - near_plane);
-  projection_matrix_[3][2] = -1;
+  projection_matrix_[2][3] = -1;
+}
+
+void Renderer::updateProjectionMatrix(glm::mat4 projection)
+{
+    projection_matrix_ = projection;
 }
 
 void Renderer::updateCamera(glm::vec3 position, glm::vec3 orientation,

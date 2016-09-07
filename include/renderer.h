@@ -70,6 +70,8 @@ class Renderer {
   void updateProjectionMatrix(float fx, float fy, float cx, float cy,
                               float near_plane, float far_plane);
 
+  void updateProjectionMatrix(glm::mat4 projection);
+
   void updateCamera(glm::vec3 position ,glm::vec3 orientation,
                     glm::mat4 projection_matrix);
   void render();
